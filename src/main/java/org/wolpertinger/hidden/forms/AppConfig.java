@@ -1,4 +1,9 @@
-package src.main.java.org.wolpertinger.hidden.forms;
+package org.wolpertinger.hidden.forms;
 
-public class AppConfig {
+import com.vaadin.flow.component.page.AppShellConfigurator;
+import com.vaadin.flow.theme.Theme;
+
+@Theme("starter-theme")
+public class AppConfig implements AppShellConfigurator
+{
 }

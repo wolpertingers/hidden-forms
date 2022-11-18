@@ -1,4 +1,4 @@
-package src.main.java.org.wolpertinger.hidden.forms;
+package org.wolpertinger.hidden.forms;
 
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
