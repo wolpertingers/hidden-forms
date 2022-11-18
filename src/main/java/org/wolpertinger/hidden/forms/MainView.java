@@ -16,8 +16,6 @@ import javax.inject.Inject;
 @Route("")
 public class MainView extends VerticalLayout {
 
-    @Injectervice;
-
     public MainView() {
         // Use TextField for standard text input
         TextField textField = new TextField("Your name");
