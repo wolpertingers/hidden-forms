@@ -8,8 +8,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
-import javax.inject.Inject;
-
 /**
  * The main view contains a button and a click listener.
  */
@@ -35,7 +33,7 @@ public class MainView extends VerticalLayout {
 
         // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
         addClassName("centered-content");
-        
+
         add(textField, button);
     }
 }
