@@ -9,3 +9,8 @@ This will be the same as:
 ```bash
 mvn package quarkus:dev
 ```
+
+For Docker the application can be started with:
+```bash
+./start.sh
+```
