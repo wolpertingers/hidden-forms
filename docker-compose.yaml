@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+
+  hidden-forms:
+    container_name: hidden-forms
+    build: .
+    network_mode: host
+    environment:
+      HTTP_PORT: 8081
