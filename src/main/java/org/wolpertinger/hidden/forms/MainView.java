@@ -8,9 +8,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
-/**
- * The main view contains a button and a click listener.
- */
 @Route("")
 public class MainView extends VerticalLayout {
 
@@ -21,7 +18,7 @@ public class MainView extends VerticalLayout {
 
         // Button click listeners can be defined as lambda expressions
         Button button = new Button("Say hello", e -> Notification
-                .show("Hello World!"));
+                .show(String.format("Hello %s!", textField.getValue())));
 
         // Theme variants give you predefined extra styles for components.
         // Example: Primary button is more prominent look.
