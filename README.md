@@ -7,7 +7,7 @@ Forms for attendees of the hut to fill out
 For development you can start the application simply running `mvn`.</br>
 This will be the same as:
 ```bash
-mvn package quarkus:dev
+./mvnv package quarkus:dev
 ```
 
 For Docker the application can be started with:
