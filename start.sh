@@ -1,3 +1,3 @@
 #!/bin/bash
-mvn clean package -Pproduction
+./mvnw clean package -Pproduction
 docker compose up --build --detach
