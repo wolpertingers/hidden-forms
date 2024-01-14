@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
@@ -13,8 +14,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.ClassList;
+import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.InvalidApplicationConfigurationException;
+import org.wolpertinger.hidden.forms.json.ClassListDeserializer;
+import org.wolpertinger.hidden.forms.json.ThemeListDeserializer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,8 +34,12 @@ public class MainView extends VerticalLayout {
 
     private ObjectMapper getMapper() {
         if (mapper == null) {
-            mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-            mapper.registerSubtypes(ClassList.class);
+            mapper = new ObjectMapper()
+                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            SimpleModule module = new SimpleModule();
+            module.addDeserializer(ClassList.class, new ClassListDeserializer());
+            module.addDeserializer(ThemeList.class, new ThemeListDeserializer());
+            mapper.registerModule(module);
         }
         return mapper;
     }
