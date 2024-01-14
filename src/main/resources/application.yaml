@@ -1,0 +1,3 @@
+wolpertinger:
+  config:
+    path: "src/test/resources/config.json"

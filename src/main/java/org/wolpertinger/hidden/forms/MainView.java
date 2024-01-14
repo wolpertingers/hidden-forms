@@ -12,12 +12,13 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.InvalidApplicationConfigurationException;
+import org.eclipse.microprofile.config.ConfigProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wolpertinger.hidden.forms.json.ClassListDeserializer;
 import org.wolpertinger.hidden.forms.json.ThemeListDeserializer;
 
@@ -31,6 +32,9 @@ import java.util.List;
 
 @Route("")
 public class MainView extends VerticalLayout {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private ObjectMapper mapper;
 
     private ObjectMapper getMapper() {
@@ -46,7 +50,8 @@ public class MainView extends VerticalLayout {
     }
 
     public MainView() throws IOException {
-        Path path = Paths.get("src/test/resources/config.json");
+        String configFilePath = ConfigProvider.getConfig().getValue("wolpertinger.config.path", String.class);
+        Path path = Paths.get(configFilePath);
         BufferedReader reader = Files.newBufferedReader(path);
 
         var components = getMapper().readTree(reader);
@@ -55,7 +60,9 @@ public class MainView extends VerticalLayout {
             JavaType javaType = getType(component);
             Object vaadinComponent = getMapper().treeToValue(component.get("config"), javaType);
             if (!(vaadinComponent instanceof Component)) {
-                throw new InvalidApplicationConfigurationException("Config is not a vaadin component: " + javaType.getTypeName());
+                String error = "Config is not a vaadin component: " + javaType.getTypeName();
+                logger.error(error);
+                throw new InvalidApplicationConfigurationException(error);
             }
             add((Component) vaadinComponent);
         }
