@@ -2,9 +2,20 @@ version: '3.9'
 
 services:
 
+  postgres:
+    container_name: postgres
+    image: postgres:13
+    network_mode: host
+    environment:
+      POSTGRES_DB: forms
+      POSTGRES_USER: wolpi
+      POSTGRES_PASSWORD: secret
+
   hidden-forms:
     container_name: hidden-forms
     build: .
+    profiles:
+      - dockerized
     network_mode: host
     environment:
       HTTP_PORT: 8081
