@@ -58,13 +58,13 @@ public class MainView extends VerticalLayout {
 
         for (var component : components) {
             JavaType javaType = getType(component);
-            Object vaadinComponent = getMapper().treeToValue(component.get("config"), javaType);
-            if (!(vaadinComponent instanceof Component)) {
+            Object parsedComponent = getMapper().treeToValue(component.get("config"), javaType);
+            if (!(parsedComponent instanceof Component vaadinComponent)) {
                 String error = "Config is not a vaadin component: " + javaType.getTypeName();
                 logger.error(error);
                 throw new InvalidApplicationConfigurationException(error);
             }
-            add((Component) vaadinComponent);
+            add(vaadinComponent);
         }
 
         // Button click listeners can be defined as lambda expressions
