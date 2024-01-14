@@ -16,6 +16,8 @@ services:
   hidden-forms:
     container_name: hidden-forms
     build: .
+    profiles:
+      - dockerized
     network_mode: host
     environment:
       HTTP_PORT: 8081
