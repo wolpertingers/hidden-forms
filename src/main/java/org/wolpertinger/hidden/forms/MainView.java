@@ -60,18 +60,8 @@ public class MainView extends VerticalLayout {
             add((Component) vaadinComponent);
         }
 
-        var radioButtonGroup = new RadioButtonGroup<String>();
-        radioButtonGroup.setLabel("Dumm?");
-        radioButtonGroup.setItems("true", "false");
-        add(radioButtonGroup);
-
-        // Use TextField for standard text input
-        TextField textField = new TextField("Your name");
-        textField.addThemeName("bordered");
-
         // Button click listeners can be defined as lambda expressions
-        Button button = new Button("Say hello", e -> Notification
-                .show(String.format("Hello %s!", textField.getValue())));
+        Button button = new Button("Bestätigen", e -> Notification.show("Hello there!", 1000, Notification.Position.TOP_CENTER));
 
         // Theme variants give you predefined extra styles for components.
         // Example: Primary button is more prominent look.
@@ -84,7 +74,7 @@ public class MainView extends VerticalLayout {
         // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
         addClassName("centered-content");
 
-        add(textField, button);
+        add(button);
     }
 
     private JavaType getType(JsonNode classDefinition) {
