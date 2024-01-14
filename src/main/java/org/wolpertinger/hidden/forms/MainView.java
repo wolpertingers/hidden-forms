@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
@@ -39,7 +40,7 @@ public class MainView extends VerticalLayout {
             SimpleModule module = new SimpleModule();
             module.addDeserializer(ClassList.class, new ClassListDeserializer());
             module.addDeserializer(ThemeList.class, new ThemeListDeserializer());
-            mapper.registerModule(module);
+            mapper.registerModules(module, new JavaTimeModule());
         }
         return mapper;
     }

@@ -1,5 +1,23 @@
 [
   {
+    "className": "com.vaadin.flow.component.textfield.TextField",
+    "config": {
+      "label": "Schreib mal hier was",
+      "minLength": 4,
+      "maxLength": 16,
+      "placeholder": "Hütte?"
+    }
+  },
+  {
+    "className": "com.vaadin.flow.component.datepicker.DatePicker",
+    "config": {
+      "label": "Wann willst du gehen?",
+      "locale": "de-DE",
+      "min": "2024-08-29",
+      "max": "2024-08-30"
+    }
+  },
+  {
     "className": "org.wolpertinger.hidden.forms.model.RadioButtonGroup",
     "genericTypes": [
       {
@@ -10,8 +28,8 @@
       "label": "Geschlecht",
       "required": true,
       "items": [
-        "true",
-        "false"
+        "männlich",
+        "weiblich"
       ]
     }
   }
