@@ -1,0 +1,18 @@
+[
+  {
+    "className": "org.wolpertinger.hidden.forms.model.RadioButtonGroup",
+    "genericTypes": [
+      {
+        "className": "java.lang.String"
+      }
+    ],
+    "config": {
+      "label": "Geschlecht",
+      "required": true,
+      "items": [
+        "true",
+        "false"
+      ]
+    }
+  }
+]
