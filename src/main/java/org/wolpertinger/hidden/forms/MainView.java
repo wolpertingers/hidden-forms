@@ -6,19 +6,26 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.InvalidApplicationConfigurationException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wolpertinger.hidden.forms.entity.ComponentResponse;
+import org.wolpertinger.hidden.forms.entity.Response;
+import org.wolpertinger.hidden.forms.entity.ResponseRepository;
 import org.wolpertinger.hidden.forms.json.ClassListDeserializer;
 import org.wolpertinger.hidden.forms.json.ThemeListDeserializer;
 
@@ -29,13 +36,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@ApplicationScoped
 @Route("")
 public class MainView extends VerticalLayout {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ObjectMapper mapper;
+
+    @Inject
+    ResponseRepository repository;
 
     private ObjectMapper getMapper() {
         if (mapper == null) {
@@ -54,6 +66,9 @@ public class MainView extends VerticalLayout {
         Path path = Paths.get(configFilePath);
         BufferedReader reader = Files.newBufferedReader(path);
 
+        // create submittable form
+        var responseForm = new FormLayout();
+
         var components = getMapper().readTree(reader);
 
         for (var component : components) {
@@ -64,11 +79,11 @@ public class MainView extends VerticalLayout {
                 logger.error(error);
                 throw new InvalidApplicationConfigurationException(error);
             }
-            add(vaadinComponent);
+            responseForm.add(vaadinComponent);
         }
 
         // Button click listeners can be defined as lambda expressions
-        Button button = new Button("Bestätigen", e -> Notification.show("Hello there!", 1000, Notification.Position.TOP_CENTER));
+        Button button = new Button("Bestätigen", e -> storeResponse(responseForm.getChildren().collect(Collectors.toList())));
 
         // Theme variants give you predefined extra styles for components.
         // Example: Primary button is more prominent look.
@@ -81,7 +96,26 @@ public class MainView extends VerticalLayout {
         // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
         addClassName("centered-content");
 
-        add(button);
+        responseForm.add(button);
+        add(responseForm);
+    }
+
+    private void storeResponse(List<Component> components) {
+        Response response = repository.findOrCreate("1234");
+        List<ComponentResponse> responses = new ArrayList<>();
+        for (Component component : components) {
+            responses.add(getResponse(component));
+        }
+        response.responses = responses;
+        repository.createOrUpdate(response);
+        Notification.show("Antworten wurden gespeichert", 1000, Notification.Position.TOP_CENTER);
+    }
+
+    private ComponentResponse getResponse(Component component) {
+        var response = new ComponentResponse();
+        response.id = component.getId().get();
+        response.value = (String) ((AbstractField) component).getValue();
+        return response;
     }
 
     private JavaType getType(JsonNode classDefinition) {
