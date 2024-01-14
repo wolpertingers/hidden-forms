@@ -1,0 +1,64 @@
+[
+  {
+    "className": "com.vaadin.flow.component.textfield.TextField",
+    "config": {
+      "label": "Schreib mal hier was",
+      "minLength": 4,
+      "maxLength": 16,
+      "placeholder": "Hütte?"
+    }
+  },
+  {
+    "className": "com.vaadin.flow.component.datepicker.DatePicker",
+    "config": {
+      "label": "Wann willst du gehen?",
+      "locale": "de-DE",
+      "min": "2024-08-29",
+      "max": "2024-08-30"
+    }
+  },
+  {
+    "className": "com.vaadin.flow.component.timepicker.TimePicker",
+    "config": {
+      "label": "Wieviel Uhr würdest du losfahren?",
+      "locale": "de-DE",
+      "min": "09:00:00",
+      "max": "18:00:00"
+    }
+  },
+  {
+    "className": "org.wolpertinger.hidden.forms.model.RadioButtonGroup",
+    "genericTypes": [
+      {
+        "className": "java.lang.String"
+      }
+    ],
+    "config": {
+      "label": "Geschlecht",
+      "required": true,
+      "items": [
+        "männlich",
+        "weiblich"
+      ]
+    }
+  },
+  {
+    "className": "org.wolpertinger.hidden.forms.model.Select",
+    "genericTypes": [
+      {
+        "className": "java.lang.String"
+      }
+    ],
+    "config": {
+      "label": "Wieviel Bier trinkst du?",
+      "placeholder": "Kein Bier ist keine Lösung",
+      "emptySelectionAllowed": true,
+      "emptySelectionCaption": "NEIN!! BÖSE!!!",
+      "items": [
+        "10",
+        "20",
+        "100+"
+      ]
+    }
+  }
+]
