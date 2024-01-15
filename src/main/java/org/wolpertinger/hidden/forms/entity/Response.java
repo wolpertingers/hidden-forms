@@ -13,4 +13,13 @@ public class Response extends PanacheEntity {
     public String userId;
     @OneToMany(mappedBy = "response")
     public List<ComponentResponse> responses;
+
+    public ComponentResponse getResponse(String componentId) {
+        for (var response : responses) {
+            if (response.componentId.equals(componentId)) {
+                return response;
+            }
+        }
+        return null;
+    }
 }

@@ -8,10 +8,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.ClassList;
@@ -36,7 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Locale;
 
 @ApplicationScoped
 @Route("")
@@ -66,38 +63,29 @@ public class MainView extends VerticalLayout {
         Path path = Paths.get(configFilePath);
         BufferedReader reader = Files.newBufferedReader(path);
 
-        // create submittable form
-        var responseForm = new FormLayout();
+        UI.getCurrent().setLocale(Locale.GERMAN);
 
         var components = getMapper().readTree(reader);
+        var vaadinComponents = new ArrayList<AbstractField>();
 
         for (var component : components) {
             JavaType javaType = getType(component);
             Object parsedComponent = getMapper().treeToValue(component.get("config"), javaType);
-            if (!(parsedComponent instanceof Component vaadinComponent)) {
-                String error = "Config is not a vaadin component: " + javaType.getTypeName();
+            if (!(parsedComponent instanceof AbstractField vaadinComponent)) {
+                String error = "Config is not a vaadin field: " + javaType.getTypeName();
                 logger.error(error);
                 throw new InvalidApplicationConfigurationException(error);
             }
-            responseForm.add(vaadinComponent);
+            vaadinComponents.add(vaadinComponent);
         }
 
-        // Button click listeners can be defined as lambda expressions
-        Button button = new Button("Bestätigen", e -> storeResponse(responseForm.getChildren().collect(Collectors.toList())));
-
-        // Theme variants give you predefined extra styles for components.
-        // Example: Primary button is more prominent look.
-        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
-        // You can specify keyboard shortcuts for buttons.
-        // Example: Pressing enter in this view clicks the Button.
-        button.addClickShortcut(Key.ENTER);
-
-        // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
-        addClassName("centered-content");
-
-        responseForm.add(button);
-        add(responseForm);
+        // create submittable form
+//        var responseForm = new ResponseForm(vaadinComponents);
+//
+//        // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
+//        addClassName("centered-content");
+//
+//        add(responseForm);
     }
 
     private void storeResponse(List<Component> components) {
