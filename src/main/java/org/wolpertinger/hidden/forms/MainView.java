@@ -104,17 +104,19 @@ public class MainView extends VerticalLayout {
         Response response = repository.findOrCreate("1234");
         List<ComponentResponse> responses = new ArrayList<>();
         for (Component component : components) {
-            responses.add(getResponse(component));
+            if (component instanceof AbstractField field && field.getId().isPresent()) {
+                responses.add(getResponse(field));
+            }
         }
         response.responses = responses;
         repository.createOrUpdate(response);
         Notification.show("Antworten wurden gespeichert", 1000, Notification.Position.TOP_CENTER);
     }
 
-    private ComponentResponse getResponse(Component component) {
+    private ComponentResponse getResponse(AbstractField field) {
         var response = new ComponentResponse();
-        response.componentId = component.getId().get();
-        response.value = (String) ((AbstractField) component).getValue();
+        response.componentId = field.getId().get();
+        response.value = (String) field.getValue();
         return response;
     }
 
