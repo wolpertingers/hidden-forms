@@ -6,10 +6,17 @@ quarkus:
     auth-server-url: http://localhost:18080/realms/wolpertingers
     client-id: hidden-forms
     application-type: web-app
+    authentication:
+      redirect-path: /
+      restore-path-after-redirect: true
+    token-state-manager:
+      split-tokens: true
     logout:
       path: /logout
       post-logout-path: /
   http:
+    proxy:
+      proxy-address-forwarding: true
     auth:
       permission:
         protected:
