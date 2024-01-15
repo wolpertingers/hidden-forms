@@ -9,6 +9,7 @@ quarkus:
     authentication:
       redirect-path: /
       restore-path-after-redirect: true
+      user-info-required: true
     token-state-manager:
       split-tokens: true
     logout:

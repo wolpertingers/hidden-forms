@@ -10,13 +10,19 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.InvalidApplicationConfigurationException;
+import io.quarkus.oidc.IdToken;
+import io.quarkus.oidc.OidcConfigurationMetadata;
+import io.quarkus.oidc.UserInfo;
+import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wolpertinger.hidden.forms.json.ClassListDeserializer;
@@ -37,6 +43,14 @@ public class MainView extends VerticalLayout {
 
     private ObjectMapper mapper;
 
+    @Inject
+    UserInfo userInfo;
+    @Inject
+    @IdToken
+    JsonWebToken jwt;
+    @Inject
+    OidcConfigurationMetadata meta;
+
     private ObjectMapper getMapper() {
         if (mapper == null) {
             mapper = new ObjectMapper()
@@ -50,6 +64,12 @@ public class MainView extends VerticalLayout {
     }
 
     public MainView() throws IOException {
+        logger.info("JWT:" + (jwt != null));
+        logger.info("UserInfo:" + (userInfo != null));
+        logger.info("meta:" + (meta != null));
+        var heading = new Div("Hallo " + userInfo);
+        add(heading);
+
         String configFilePath = ConfigProvider.getConfig().getValue("wolpertinger.config.path", String.class);
         Path path = Paths.get(configFilePath);
         BufferedReader reader = Files.newBufferedReader(path);
@@ -71,18 +91,10 @@ public class MainView extends VerticalLayout {
         submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         submit.addClickShortcut(Key.ENTER);
 
-        Button logout = new Button("Ausloggen", e -> logout());
-        logout.addThemeVariants(ButtonVariant.LUMO_ERROR);
-
         // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
         addClassName("centered-content");
 
         add(submit);
-        add(logout);
-    }
-
-    private void logout() {
-        getUI().ifPresent(value -> value.getSession().close());
     }
 
     private JavaType getType(JsonNode classDefinition) {
@@ -102,3 +114,4 @@ public class MainView extends VerticalLayout {
         return types.toArray(JavaType[]::new);
     }
 }
+
