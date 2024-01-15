@@ -113,7 +113,7 @@ public class MainView extends VerticalLayout {
 
     private ComponentResponse getResponse(Component component) {
         var response = new ComponentResponse();
-        response.id = component.getId().get();
+        response.componentId = component.getId().get();
         response.value = (String) ((AbstractField) component).getValue();
         return response;
     }
