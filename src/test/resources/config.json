@@ -27,7 +27,7 @@
     }
   },
   {
-    "className": "org.wolpertinger.hidden.forms.model.RadioButtonGroup",
+    "className": "org.wolpertinger.hidden.forms.ui.RadioButtonGroup",
     "genericTypes": [
       {
         "className": "java.lang.String"
@@ -43,7 +43,7 @@
     }
   },
   {
-    "className": "org.wolpertinger.hidden.forms.model.Select",
+    "className": "org.wolpertinger.hidden.forms.ui.Select",
     "genericTypes": [
       {
         "className": "java.lang.String"
