@@ -20,6 +20,6 @@ quarkus:
       proxy-address-forwarding: true
     auth:
       permission:
-        protected:
+        ui:
           paths: /
           policy: authenticated
