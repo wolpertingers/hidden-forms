@@ -20,7 +20,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.InvalidApplicationConfigurationException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,8 +101,7 @@ public class MainView extends VerticalLayout {
         add(submit);
     }
 
-    @Transactional
-    public void submitForm() {
+    private void submitForm() {
         var nonOkBinders = binders.stream().filter(b -> !b.validate().isOk()).count();
         if (nonOkBinders == 0) {
             var response = new Response("2134");
