@@ -2,6 +2,7 @@
   {
     "className": "com.vaadin.flow.component.textfield.TextField",
     "config": {
+      "id": "hut",
       "label": "Schreib mal hier was",
       "minLength": 4,
       "maxLength": 16,
@@ -11,6 +12,7 @@
   {
     "className": "com.vaadin.flow.component.datepicker.DatePicker",
     "config": {
+      "id": "date",
       "label": "Wann willst du gehen?",
       "locale": "de-DE",
       "min": "2024-08-29",
@@ -20,6 +22,7 @@
   {
     "className": "com.vaadin.flow.component.timepicker.TimePicker",
     "config": {
+      "id": "time",
       "label": "Wieviel Uhr würdest du losfahren?",
       "locale": "de-DE",
       "min": "09:00:00",
@@ -34,6 +37,7 @@
       }
     ],
     "config": {
+      "id": "gender",
       "label": "Geschlecht",
       "required": true,
       "items": [
@@ -50,6 +54,7 @@
       }
     ],
     "config": {
+      "id": "beer",
       "label": "Wieviel Bier trinkst du?",
       "placeholder": "Kein Bier ist keine Lösung",
       "emptySelectionAllowed": true,

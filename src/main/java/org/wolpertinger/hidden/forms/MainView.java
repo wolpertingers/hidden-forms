@@ -6,19 +6,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.InvalidApplicationConfigurationException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wolpertinger.hidden.forms.entity.ComponentResponse;
+import org.wolpertinger.hidden.forms.entity.Response;
+import org.wolpertinger.hidden.forms.entity.ResponseRepository;
 import org.wolpertinger.hidden.forms.json.ClassListDeserializer;
 import org.wolpertinger.hidden.forms.json.ThemeListDeserializer;
 
@@ -31,11 +39,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Route("")
+@ApplicationScoped
 public class MainView extends VerticalLayout {
+
+    @Inject
+    ResponseRepository repository;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ObjectMapper mapper;
+    private List<Binder<ComponentResponse>> binders = new ArrayList<>();
 
     private ObjectMapper getMapper() {
         if (mapper == null) {
@@ -49,13 +62,15 @@ public class MainView extends VerticalLayout {
         return mapper;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public MainView() throws IOException {
         String configFilePath = ConfigProvider.getConfig().getValue("wolpertinger.config.path", String.class);
         Path path = Paths.get(configFilePath);
         BufferedReader reader = Files.newBufferedReader(path);
 
-        var components = getMapper().readTree(reader);
+        var response = new Response("1234");
 
+        var components = getMapper().readTree(reader);
         for (var component : components) {
             JavaType javaType = getType(component);
             Object parsedComponent = getMapper().treeToValue(component.get("config"), javaType);
@@ -64,10 +79,20 @@ public class MainView extends VerticalLayout {
                 logger.error(error);
                 throw new InvalidApplicationConfigurationException(error);
             }
-            add(vaadinComponent);
+            var field = (AbstractField) vaadinComponent;
+            var fieldId = field.getId();
+            if (fieldId.isPresent()) {
+                var componentResponse = new ComponentResponse();
+                componentResponse.setComponentId(fieldId.get());
+                var binder = new Binder<ComponentResponse>();
+                binder.setBean(componentResponse);
+                binder.forField(field).bind(componentResponse, componentResponse);
+                binders.add(binder);
+                add(vaadinComponent);
+            }
         }
 
-        Button submit = new Button("Bestätigen", e -> Notification.show("Hello there!", 1000, Notification.Position.TOP_CENTER));
+        Button submit = new Button("Bestätigen", e -> submitForm());
         submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         submit.addClickShortcut(Key.ENTER);
 
@@ -75,6 +100,21 @@ public class MainView extends VerticalLayout {
         addClassName("centered-content");
 
         add(submit);
+    }
+
+    @Transactional
+    public void submitForm() {
+        var nonOkBinders = binders.stream().filter(b -> !b.validate().isOk()).count();
+        if (nonOkBinders == 0) {
+            var response = new Response("2134");
+            for (var binder : binders) {
+                var componentResponse = binder.getBean();
+                componentResponse.setResponse(response);
+                response.addResponse(componentResponse);
+            }
+            repository.createOrUpdate(response);
+            Notification.show("Antworten wurden gesendet.", 1000, Notification.Position.TOP_CENTER);
+        }
     }
 
     private JavaType getType(JsonNode classDefinition) {

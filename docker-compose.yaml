@@ -13,6 +13,15 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
 
+  postgres:
+    container_name: postgres
+    image: postgres:13
+    network_mode: host
+    environment:
+      POSTGRES_DB: forms
+      POSTGRES_USER: wolpi
+      POSTGRES_PASSWORD: secret
+
   hidden-forms:
     container_name: hidden-forms
     build: .
