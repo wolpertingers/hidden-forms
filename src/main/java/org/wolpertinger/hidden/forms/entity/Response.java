@@ -1,6 +1,7 @@
 package org.wolpertinger.hidden.forms.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import org.hibernate.annotations.NaturalId;
@@ -14,7 +15,7 @@ public class Response extends PanacheEntity {
     @NaturalId
     public String userId;
 
-    @OneToMany(mappedBy = "response")
+    @OneToMany(mappedBy = "response", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<ComponentResponse> responses;
 
     public Response() {
