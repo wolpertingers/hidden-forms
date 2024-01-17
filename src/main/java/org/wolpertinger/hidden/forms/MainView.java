@@ -67,21 +67,14 @@ public class MainView extends VerticalLayout {
             add(vaadinComponent);
         }
 
-        // Button click listeners can be defined as lambda expressions
-        Button button = new Button("Bestätigen", e -> Notification.show("Hello there!", 1000, Notification.Position.TOP_CENTER));
-
-        // Theme variants give you predefined extra styles for components.
-        // Example: Primary button is more prominent look.
-        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
-        // You can specify keyboard shortcuts for buttons.
-        // Example: Pressing enter in this view clicks the Button.
-        button.addClickShortcut(Key.ENTER);
+        Button submit = new Button("Bestätigen", e -> Notification.show("Hello there!", 1000, Notification.Position.TOP_CENTER));
+        submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        submit.addClickShortcut(Key.ENTER);
 
         // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
         addClassName("centered-content");
 
-        add(button);
+        add(submit);
     }
 
     private JavaType getType(JsonNode classDefinition) {
@@ -101,3 +94,4 @@ public class MainView extends VerticalLayout {
         return types.toArray(JavaType[]::new);
     }
 }
+
