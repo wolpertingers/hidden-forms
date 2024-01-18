@@ -1,4 +1,4 @@
-package org.wolpertinger.hidden.forms.model;
+package org.wolpertinger.hidden.forms.ui;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.vaadin.flow.component.select.data.SelectListDataView;

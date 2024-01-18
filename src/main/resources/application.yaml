@@ -20,6 +20,15 @@ quarkus:
       proxy-address-forwarding: true
     auth:
       permission:
-        protected:
+        ui:
           paths: /
           policy: authenticated
+  datasource:
+    db-kind: postgresql
+    username: wolpi
+    password: secret
+    jdbc:
+      url: jdbc:postgresql://localhost:5432/forms
+  hibernate-orm:
+    database:
+      generation: update

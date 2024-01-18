@@ -2,6 +2,7 @@
   {
     "className": "com.vaadin.flow.component.textfield.TextField",
     "config": {
+      "id": "hut",
       "label": "Schreib mal hier was",
       "minLength": 4,
       "maxLength": 16,
@@ -10,7 +11,9 @@
   },
   {
     "className": "com.vaadin.flow.component.datepicker.DatePicker",
+    "valueClass": "java.time.LocalDate",
     "config": {
+      "id": "date",
       "label": "Wann willst du gehen?",
       "locale": "de-DE",
       "min": "2024-08-29",
@@ -19,7 +22,9 @@
   },
   {
     "className": "com.vaadin.flow.component.timepicker.TimePicker",
+    "valueClass": "java.time.LocalTime",
     "config": {
+      "id": "time",
       "label": "Wieviel Uhr würdest du losfahren?",
       "locale": "de-DE",
       "min": "09:00:00",
@@ -27,13 +32,14 @@
     }
   },
   {
-    "className": "org.wolpertinger.hidden.forms.model.RadioButtonGroup",
+    "className": "org.wolpertinger.hidden.forms.ui.RadioButtonGroup",
     "genericTypes": [
       {
         "className": "java.lang.String"
       }
     ],
     "config": {
+      "id": "gender",
       "label": "Geschlecht",
       "required": true,
       "items": [
@@ -43,13 +49,14 @@
     }
   },
   {
-    "className": "org.wolpertinger.hidden.forms.model.Select",
+    "className": "org.wolpertinger.hidden.forms.ui.Select",
     "genericTypes": [
       {
         "className": "java.lang.String"
       }
     ],
     "config": {
+      "id": "beer",
       "label": "Wieviel Bier trinkst du?",
       "placeholder": "Kein Bier ist keine Lösung",
       "emptySelectionAllowed": true,
