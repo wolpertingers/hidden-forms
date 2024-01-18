@@ -41,13 +41,10 @@ import java.util.List;
 @ApplicationScoped
 public class MainView extends VerticalLayout {
 
-    @Inject
-    ResponseRepository repository;
-
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ObjectMapper mapper;
-    private List<Binder<ComponentResponse>> binders = new ArrayList<>();
+    private final List<Binder<ComponentResponse>> binders = new ArrayList<>();
 
     private ObjectMapper getMapper() {
         if (mapper == null) {
@@ -61,13 +58,14 @@ public class MainView extends VerticalLayout {
         return mapper;
     }
 
+    @Inject
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public MainView() throws IOException {
+    public MainView(ResponseRepository repository) throws IOException {
         String configFilePath = ConfigProvider.getConfig().getValue("wolpertinger.config.path", String.class);
         Path path = Paths.get(configFilePath);
         BufferedReader reader = Files.newBufferedReader(path);
 
-        var response = new Response("1234");
+        var response = repository.findOrCreate("1234");
 
         var components = getMapper().readTree(reader);
         for (var component : components) {
@@ -81,8 +79,9 @@ public class MainView extends VerticalLayout {
             var field = (AbstractField) vaadinComponent;
             var fieldId = field.getId();
             if (fieldId.isPresent()) {
-                var componentResponse = new ComponentResponse();
-                componentResponse.setComponentId(fieldId.get());
+                var componentResponse = response.getResponse(fieldId.get());
+                Class<?> valueClass = parseClassName(component);
+                componentResponse.setValueClass(valueClass);
                 var binder = new Binder<ComponentResponse>();
                 binder.setBean(componentResponse);
                 binder.forField(field).bind(componentResponse, componentResponse);
@@ -91,7 +90,7 @@ public class MainView extends VerticalLayout {
             }
         }
 
-        Button submit = new Button("Bestätigen", e -> submitForm());
+        Button submit = new Button("Bestätigen", e -> submitForm(repository, response));
         submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         submit.addClickShortcut(Key.ENTER);
 
@@ -101,18 +100,31 @@ public class MainView extends VerticalLayout {
         add(submit);
     }
 
-    private void submitForm() {
+    private void submitForm(ResponseRepository repository, Response response) {
         var nonOkBinders = binders.stream().filter(b -> !b.validate().isOk()).count();
         if (nonOkBinders == 0) {
-            var response = new Response("2134");
             for (var binder : binders) {
                 var componentResponse = binder.getBean();
                 componentResponse.setResponse(response);
                 response.addResponse(componentResponse);
             }
-            repository.createOrUpdate(response);
+            repository.update(response);
             Notification.show("Antworten wurden gesendet.", 1000, Notification.Position.TOP_CENTER);
         }
+    }
+
+    private Class<?> parseClassName(JsonNode classDefinition) {
+        var valueClass = classDefinition.get("valueClass");
+        if (valueClass != null) {
+            try {
+                return Class.forName(valueClass.textValue());
+            } catch (ClassNotFoundException e) {
+                String error = "Class for value cannot be found: " + valueClass.textValue();
+                logger.error(error);
+                throw new InvalidApplicationConfigurationException(error);
+            }
+        }
+        return null;
     }
 
     private JavaType getType(JsonNode classDefinition) {

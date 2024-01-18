@@ -31,4 +31,4 @@ quarkus:
       url: jdbc:postgresql://localhost:5432/forms
   hibernate-orm:
     database:
-      generation: drop-and-create # TODO: replace in prod
+      generation: update

@@ -6,10 +6,15 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Entity
-public class ComponentResponse extends PanacheEntity implements ValueProvider<ComponentResponse, String>, Setter<ComponentResponse, Object> {
+public class ComponentResponse extends PanacheEntity implements ValueProvider<ComponentResponse, Object>, Setter<ComponentResponse, Object> {
     private String componentId;
     private String value;
+    private Class<?> valueClass;
     @ManyToOne
     private Response response;
 
@@ -31,6 +36,10 @@ public class ComponentResponse extends PanacheEntity implements ValueProvider<Co
         return this.value;
     }
 
+    public void setValueClass(Class<?> valueClass) {
+        this.valueClass = valueClass;
+    }
+
     public ComponentResponse setResponse(Response response) {
         this.response = response;
         return this;
@@ -46,7 +55,18 @@ public class ComponentResponse extends PanacheEntity implements ValueProvider<Co
     }
 
     @Override
-    public String apply(ComponentResponse response) {
+    public Object apply(ComponentResponse response) {
+        if (valueClass != null) {
+            if (valueClass.isAssignableFrom(LocalDateTime.class)) {
+                return LocalDateTime.parse(response.getValue());
+            }
+            if (valueClass.isAssignableFrom(LocalDate.class)) {
+                return LocalDate.parse(response.getValue());
+            }
+            if (valueClass.isAssignableFrom(LocalTime.class)) {
+                return LocalTime.parse(response.getValue());
+            }
+        }
         return response.getValue();
     }
 }

@@ -1,10 +1,10 @@
 package org.wolpertinger.hidden.forms.entity;
 
+import com.vaadin.quarkus.annotation.VaadinSessionScoped;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
-@ApplicationScoped
+@VaadinSessionScoped
 public class ResponseRepository implements PanacheRepository<Response> {
 
 
@@ -22,11 +22,7 @@ public class ResponseRepository implements PanacheRepository<Response> {
     }
 
     @Transactional
-    public void createOrUpdate(Response response) {
-        Response existing = findByUserId(response.userId);
-        if (existing == null) {
-            existing = response;
-        }
-        persistAndFlush(existing);
+    public void update(Response response) {
+        persistAndFlush(response);
     }
 }
