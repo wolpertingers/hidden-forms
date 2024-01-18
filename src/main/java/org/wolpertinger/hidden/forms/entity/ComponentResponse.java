@@ -5,6 +5,7 @@ import com.vaadin.flow.function.ValueProvider;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.time.LocalTime;
 public class ComponentResponse extends PanacheEntity implements ValueProvider<ComponentResponse, Object>, Setter<ComponentResponse, Object> {
     private String componentId;
     private String value;
+    @Transient
     private Class<?> valueClass;
     @ManyToOne
     private Response response;

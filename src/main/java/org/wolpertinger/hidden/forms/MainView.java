@@ -109,7 +109,7 @@ public class MainView extends VerticalLayout {
                 response.addResponse(componentResponse);
             }
             repository.update(response);
-            Notification.show("Antworten wurden gesendet.", 1000, Notification.Position.TOP_CENTER);
+            Notification.show("Antworten wurden gesendet.", 3000, Notification.Position.TOP_CENTER);
         }
     }
 
