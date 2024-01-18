@@ -9,7 +9,6 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class ComponentResponse extends PanacheEntity implements ValueProvider<ComponentResponse, String>, Setter<ComponentResponse, Object> {
     private String componentId;
-    // TODO: values of type date etc are not stored
     private String value;
     @ManyToOne
     private Response response;
@@ -43,8 +42,7 @@ public class ComponentResponse extends PanacheEntity implements ValueProvider<Co
 
     @Override
     public void accept(ComponentResponse response, Object value) {
-        // TODO: logic instead of cast
-        response.setValue((String) value);
+        response.setValue(value.toString());
     }
 
     @Override
