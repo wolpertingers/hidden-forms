@@ -26,6 +26,9 @@ public class Response extends PanacheEntity {
     }
 
     public ComponentResponse getResponse(String componentId) {
+        if (responses == null) {
+            responses = new ArrayList<>();
+        }
         var optionalResponse = responses.stream().filter(cr -> cr.getComponentId().equals(componentId)).findAny();
         return optionalResponse.orElseGet(() -> new ComponentResponse().setComponentId(componentId).setResponse(this));
     }
