@@ -11,6 +11,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.Binder;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.wolpertinger.hidden.forms.entity.ComponentResponse;
 import org.wolpertinger.hidden.forms.entity.Response;
 import org.wolpertinger.hidden.forms.entity.ResponseRepository;
+import org.wolpertinger.hidden.forms.http.OidcService;
 import org.wolpertinger.hidden.forms.json.ClassListDeserializer;
 import org.wolpertinger.hidden.forms.json.ThemeListDeserializer;
 
@@ -60,7 +62,11 @@ public class MainView extends VerticalLayout {
 
     @Inject
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public MainView(ResponseRepository repository) throws IOException {
+    public MainView(ResponseRepository repository, OidcService oidc) throws IOException {
+        var userInfo = oidc.getUserInfo();
+        var greeting = new H2("Hallo " + userInfo.getString("given_name") + "!");
+        add(greeting);
+
         String configFilePath = ConfigProvider.getConfig().getValue("wolpertinger.config.path", String.class);
         Path path = Paths.get(configFilePath);
         BufferedReader reader = Files.newBufferedReader(path);
@@ -91,7 +97,7 @@ public class MainView extends VerticalLayout {
         }
 
         Button submit = new Button("Bestätigen", e -> submitForm(repository, response));
-        submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_LARGE);
         submit.addClickShortcut(Key.ENTER);
 
         // Use custom CSS classes to apply styling. This is defined in shared-styles.css.

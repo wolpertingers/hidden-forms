@@ -58,17 +58,18 @@ public class ComponentResponse extends PanacheEntity implements ValueProvider<Co
 
     @Override
     public Object apply(ComponentResponse response) {
-        if (valueClass != null) {
+        var value = response.getValue();
+        if (value != null && valueClass != null) {
             if (valueClass.isAssignableFrom(LocalDateTime.class)) {
-                return LocalDateTime.parse(response.getValue());
+                return LocalDateTime.parse(value);
             }
             if (valueClass.isAssignableFrom(LocalDate.class)) {
-                return LocalDate.parse(response.getValue());
+                return LocalDate.parse(value);
             }
             if (valueClass.isAssignableFrom(LocalTime.class)) {
-                return LocalTime.parse(response.getValue());
+                return LocalTime.parse(value);
             }
         }
-        return response.getValue();
+        return value;
     }
 }
