@@ -71,7 +71,7 @@ public class MainView extends VerticalLayout {
         Path path = Paths.get(configFilePath);
         BufferedReader reader = Files.newBufferedReader(path);
 
-        var response = repository.findOrCreate("1234");
+        var response = repository.findOrCreate(userInfo.getPreferredUserName());
 
         var components = getMapper().readTree(reader);
         for (var component : components) {
