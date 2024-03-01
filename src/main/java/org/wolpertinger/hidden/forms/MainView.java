@@ -14,7 +14,6 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.Route;
@@ -24,7 +23,7 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wolpertinger.hidden.forms.entity.ComponentResponse;
+import org.wolpertinger.hidden.forms.bind.ComponentResponseBinder;
 import org.wolpertinger.hidden.forms.entity.Response;
 import org.wolpertinger.hidden.forms.entity.ResponseRepository;
 import org.wolpertinger.hidden.forms.http.OidcService;
@@ -46,7 +45,7 @@ public class MainView extends VerticalLayout {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ObjectMapper mapper;
-    private final List<Binder<ComponentResponse>> binders = new ArrayList<>();
+    private final List<ComponentResponseBinder> binders = new ArrayList<>();
 
     private ObjectMapper getMapper() {
         if (mapper == null) {
@@ -71,7 +70,7 @@ public class MainView extends VerticalLayout {
         Path path = Paths.get(configFilePath);
         BufferedReader reader = Files.newBufferedReader(path);
 
-        var response = repository.findOrCreate("1234");
+        var response = repository.findOrCreate(userInfo.getPreferredUserName());
 
         var components = getMapper().readTree(reader);
         for (var component : components) {
@@ -88,7 +87,8 @@ public class MainView extends VerticalLayout {
                 var componentResponse = response.getResponse(fieldId.get());
                 Class<?> valueClass = parseClassName(component);
                 componentResponse.setValueClass(valueClass);
-                var binder = new Binder<ComponentResponse>();
+                componentResponse.setRequired(parseRequired(component));
+                var binder = new ComponentResponseBinder();
                 binder.setBean(componentResponse);
                 binder.forField(field).bind(componentResponse, componentResponse);
                 binders.add(binder);
@@ -117,6 +117,14 @@ public class MainView extends VerticalLayout {
             repository.update(response);
             Notification.show("Antworten wurden gesendet.", 3000, Notification.Position.TOP_CENTER);
         }
+    }
+
+    private boolean parseRequired(JsonNode component) {
+        var required = component.get("required");
+        if (required != null) {
+            return Boolean.parseBoolean(required.textValue());
+        }
+        return false;
     }
 
     private Class<?> parseClassName(JsonNode classDefinition) {

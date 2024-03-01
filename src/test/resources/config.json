@@ -1,6 +1,7 @@
 [
   {
     "className": "com.vaadin.flow.component.textfield.TextField",
+    "required": true,
     "config": {
       "id": "hut",
       "label": "Schreib mal hier was",
@@ -38,10 +39,10 @@
         "className": "java.lang.String"
       }
     ],
+    "required": true,
     "config": {
       "id": "gender",
       "label": "Geschlecht",
-      "required": true,
       "items": [
         "männlich",
         "weiblich"

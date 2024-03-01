@@ -15,10 +15,14 @@ import java.time.LocalTime;
 public class ComponentResponse extends PanacheEntity implements ValueProvider<ComponentResponse, Object>, Setter<ComponentResponse, Object> {
     private String componentId;
     private String value;
-    @Transient
-    private Class<?> valueClass;
     @ManyToOne
     private Response response;
+
+    // metadata properties not stored in database:
+    @Transient
+    private Class<?> valueClass;
+    @Transient
+    private boolean required = false;
 
     public ComponentResponse setComponentId(String componentId) {
         this.componentId = componentId;
@@ -49,6 +53,14 @@ public class ComponentResponse extends PanacheEntity implements ValueProvider<Co
 
     public Response getResponse() {
         return response;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
+
+    public boolean isRequired() {
+        return required;
     }
 
     @Override
